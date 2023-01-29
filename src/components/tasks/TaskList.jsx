@@ -9,6 +9,25 @@ function TaskList() {
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newTask, setNewTask] = useState('');
 
+  const addNewTask = async (e) => {
+    e.preventDefault();
+    if (newTask.lenth <= 0) {
+      toast.error('Task is empty');
+      return;
+    }
+    try {
+      const { data } = await axios.post('/api/tasks', {
+        title: newTask,
+      });
+      toast.success('New task created');
+      setTaskList([{ ...data }, ...taskList]);
+      setNewTask('');
+      setIsAddingNew(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const getTasks = async () => {
     try {
       const { data } = await axios.get('/api/tasks/myTasks');
@@ -18,6 +37,10 @@ function TaskList() {
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const addNewButtonClick = async () => {
+    setIsAddingNew(true);
   };
 
   useEffect(() => {
@@ -39,6 +62,12 @@ function TaskList() {
       <div className={classes.topBar}>
         <button type="button" className={classes.addNew} onClick={addNewButtonClick}>Add new</button>
       </div>
+      {isAddingNew && (
+        <form className={classes.addNewForm} onSubmit={addNewTask}>
+          <input type="text" value={newTask} onChange={(e) => setNewTask(e.target.value)} placeholder="Task Title" />
+          <button type="submit">Add</button>
+        </form>
+      )}
       {taskList.length > 0 ? (
         <table className={classes.taskList_table}>
           <tbody>

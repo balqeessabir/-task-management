@@ -20,7 +20,7 @@ function Login() {
       toast.success('Login success');
     } catch (err) {
       console.log(err);
-      toast.success('Login Faild');
+      toast.error('Login Faild');
     }
   };
   return (
